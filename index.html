@@ -1,26 +1,978 @@
+
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>cloud-chaser-forecast-board</title>
-    <meta name="description" content="Lovable Generated Project" />
-    <meta name="author" content="Lovable" />
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budget Planner | SahilCodeLab</title>
+  <!-- Google Fonts - Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Reset & Base Styles */
+    :root {
+      --primary: #9b87f5;
+      --primary-dark: #7E69AB;
+      --success: #4CAF50;
+      --danger: #ea384c;
+      --light: #F6F6F7;
+      --dark: #1A1F2C;
+      --gray: #8E9196;
+      --card-bg: #fff;
+      --text: #333;
+      --border: #e0e0e0;
+      --pie-chart-bg: #f9f9f9;
+      --transition: all 0.3s ease;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
 
-    <meta property="og:title" content="cloud-chaser-forecast-board" />
-    <meta property="og:description" content="Lovable Generated Project" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    .dark-theme {
+      --primary: #6E59A5;
+      --primary-dark: #5A4A8B;
+      --card-bg: #252836;
+      --text: #FFFFFF;
+      --light: #1A1F2C;
+      --dark: #F6F6F7;
+      --border: #3a3f4b;
+      --pie-chart-bg: #1e2130;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@lovable_dev" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-  </head>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
 
-  <body>
-    <div id="root"></div>
-    <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+    body {
+      background-color: var(--light);
+      color: var(--text);
+      line-height: 1.6;
+      transition: var(--transition);
+      padding-top: 70px; /* For fixed header */
+    }
+
+    button, input, select {
+      font-family: 'Poppins', sans-serif;
+    }
+
+    /* Header Styles */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background-color: var(--primary);
+      color: #fff;
+      padding: 1rem;
+      box-shadow: var(--shadow);
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: var(--transition);
+    }
+
+    .header-title {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .company-name {
+      font-size: 0.8rem;
+      font-weight: 300;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .app-name {
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+
+    /* Container & Layout */
+    .container {
+      max-width: 1200px;
+      margin: 1rem auto;
+      padding: 0 1rem;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      transition: var(--transition);
+    }
+
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--primary);
+    }
+
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      background-color: var(--card-bg);
+      color: var(--text);
+      transition: var(--transition);
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(155, 135, 245, 0.2);
+    }
+
+    button {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 5px;
+      background-color: var(--primary);
+      color: #fff;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    button:hover {
+      background-color: var(--primary-dark);
+    }
+
+    button.danger {
+      background-color: var(--danger);
+    }
+
+    button.danger:hover {
+      background-color: #d32f2f;
+    }
+
+    .flex-row {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .flex-column {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Grid Layout */
+    .grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    @media (min-width: 768px) {
+      .grid-2-col {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .grid-3-col {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    /* Dashboard Styles */
+    .stat-card {
+      text-align: center;
+      padding: 1rem;
+      border-radius: 8px;
+      transition: var(--transition);
+    }
+
+    .stat-title {
+      font-size: 0.9rem;
+      color: var(--gray);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+
+    .stat-income {
+      background-color: rgba(76, 175, 80, 0.1);
+      color: var(--success);
+    }
+
+    .stat-expense {
+      background-color: rgba(244, 67, 54, 0.1);
+      color: var(--danger);
+    }
+
+    .stat-balance {
+      background-color: rgba(155, 135, 245, 0.1);
+      color: var(--primary);
+    }
+
+    /* Pie Chart Styles */
+    .chart-container {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      margin: 1rem auto;
+    }
+
+    .pie-chart {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: var(--pie-chart-bg);
+      overflow: hidden;
+    }
+
+    .pie-segment {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: var(--primary);
+      clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%, 50% 0%);
+      transform-origin: 50% 50%;
+      transition: var(--transition);
+    }
+
+    .chart-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .chart-value {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    /* Expense Table */
+    .expense-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    .expense-table th, .expense-table td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .expense-table th {
+      font-weight: 500;
+      color: var(--gray);
+    }
+
+    .expense-table tr {
+      transition: var(--transition);
+    }
+
+    .expense-table tr:hover {
+      background-color: rgba(155, 135, 245, 0.05);
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .action-button {
+      padding: 0.3rem 0.6rem;
+      font-size: 0.8rem;
+      border-radius: 4px;
+    }
+
+    /* Theme Toggle */
+    .theme-toggle {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0.3rem;
+    }
+
+    /* Reset Button */
+    .reset-container {
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1010;
+      visibility: hidden;
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .modal {
+      background-color: var(--card-bg);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      padding: 2rem;
+      max-width: 400px;
+      width: 90%;
+      transform: translateY(-20px);
+      transition: var(--transition);
+    }
+
+    .modal-show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .modal-show .modal {
+      transform: translateY(0);
+    }
+
+    .modal-title {
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--gray);
+      font-size: 0.9rem;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    /* Custom Category Form */
+    .custom-category-form {
+      display: none;
+      margin-top: 0.5rem;
+    }
+
+    .category-select {
+      margin-bottom: 0.5rem;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 480px) {
+      .expense-table th:nth-child(3),
+      .expense-table td:nth-child(3) {
+        display: none;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header>
+    <div class="header-title">
+      <span class="company-name">SahilCodeLab</span>
+      <h1 class="app-name">Budget Planner</h1>
+    </div>
+    <button id="themeToggle" class="theme-toggle">🌙</button>
+  </header>
+
+  <div class="container">
+    <!-- Income Section -->
+    <section class="card fade-in">
+      <h2 class="card-title">Monthly Income</h2>
+      <div class="form-group">
+        <label for="incomeAmount">Your Monthly Income</label>
+        <div class="flex-row">
+          <input type="number" id="incomeAmount" placeholder="Enter your monthly income">
+          <button id="saveIncome">Save</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section class="card fade-in">
+      <h2 class="card-title">Dashboard</h2>
+      <div class="grid grid-3-col">
+        <div class="stat-card stat-income">
+          <div class="stat-title">Total Income</div>
+          <div id="totalIncome" class="stat-value">$0</div>
+        </div>
+        <div class="stat-card stat-expense">
+          <div class="stat-title">Total Expenses</div>
+          <div id="totalExpenses" class="stat-value">$0</div>
+        </div>
+        <div class="stat-card stat-balance">
+          <div class="stat-title">Remaining Balance</div>
+          <div id="remainingBalance" class="stat-value">$0</div>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <div class="pie-chart">
+          <div id="pieSegment" class="pie-segment"></div>
+        </div>
+        <div class="chart-label">
+          <div id="usagePercentage" class="chart-value">0%</div>
+          <div>Budget Used</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Add Expense Section -->
+    <section class="card fade-in">
+      <h2 class="card-title">Add Expense</h2>
+      <form id="expenseForm">
+        <div class="grid" style="gap: 1rem;">
+          <div class="form-group">
+            <label for="expenseName">Expense Name</label>
+            <input type="text" id="expenseName" placeholder="Enter expense name" required>
+          </div>
+
+          <div class="form-group">
+            <label for="categorySelect">Category</label>
+            <select id="categorySelect" class="category-select" required>
+              <option value="">Select Category</option>
+              <option value="housing">Housing</option>
+              <option value="food">Food & Groceries</option>
+              <option value="utilities">Utilities</option>
+              <option value="transportation">Transportation</option>
+              <option value="healthcare">Healthcare</option>
+              <option value="entertainment">Entertainment</option>
+              <option value="other">Other</option>
+              <option value="custom">+ Add Custom Category</option>
+            </select>
+            
+            <div id="customCategoryForm" class="custom-category-form">
+              <input type="text" id="customCategory" placeholder="Enter custom category">
+              <button type="button" id="addCustomCategory">Add</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="expenseAmount">Amount</label>
+            <input type="number" id="expenseAmount" placeholder="Enter amount" required>
+          </div>
+
+          <div class="form-group">
+            <label for="expenseDate">Date</label>
+            <input type="date" id="expenseDate" required>
+          </div>
+        </div>
+
+        <button type="submit" id="addExpense">Add Expense</button>
+      </form>
+    </section>
+
+    <!-- Expense List Section -->
+    <section class="card fade-in">
+      <h2 class="card-title">Expenses List</h2>
+      <div id="expenseTableContainer">
+        <table class="expense-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Date</th>
+              <th>Amount</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="expenseList">
+            <!-- Expenses will be listed here dynamically -->
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="reset-container">
+        <button id="resetExpenses" class="danger">Reset Monthly Expenses</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>Made with love by SahilCodeLab © <span id="currentYear"></span></p>
+  </footer>
+
+  <!-- Confirmation Modal -->
+  <div id="confirmModal" class="modal-overlay">
+    <div class="modal">
+      <h3 class="modal-title">Confirm Action</h3>
+      <p id="modalMessage">Are you sure you want to perform this action?</p>
+      <div class="modal-actions">
+        <button id="cancelAction">Cancel</button>
+        <button id="confirmAction" class="danger">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // DOM Elements
+    const incomeAmountInput = document.getElementById('incomeAmount');
+    const saveIncomeBtn = document.getElementById('saveIncome');
+    const totalIncomeEl = document.getElementById('totalIncome');
+    const totalExpensesEl = document.getElementById('totalExpenses');
+    const remainingBalanceEl = document.getElementById('remainingBalance');
+    const usagePercentageEl = document.getElementById('usagePercentage');
+    const pieSegmentEl = document.getElementById('pieSegment');
+    const expenseForm = document.getElementById('expenseForm');
+    const expenseNameInput = document.getElementById('expenseName');
+    const categorySelect = document.getElementById('categorySelect');
+    const customCategoryForm = document.getElementById('customCategoryForm');
+    const customCategoryInput = document.getElementById('customCategory');
+    const addCustomCategoryBtn = document.getElementById('addCustomCategory');
+    const expenseAmountInput = document.getElementById('expenseAmount');
+    const expenseDateInput = document.getElementById('expenseDate');
+    const expenseList = document.getElementById('expenseList');
+    const resetExpensesBtn = document.getElementById('resetExpenses');
+    const themeToggleBtn = document.getElementById('themeToggle');
+    const confirmModal = document.getElementById('confirmModal');
+    const modalMessage = document.getElementById('modalMessage');
+    const cancelActionBtn = document.getElementById('cancelAction');
+    const confirmActionBtn = document.getElementById('confirmAction');
+    const currentYearEl = document.getElementById('currentYear');
+
+    // App state
+    let monthlyIncome = 0;
+    let expenses = [];
+    let currentTheme = localStorage.getItem('theme') || 'light';
+    let editingExpenseId = null;
+    let pendingAction = null;
+
+    // Initialize app
+    function initializeApp() {
+      // Set current year in footer
+      currentYearEl.textContent = new Date().getFullYear();
+
+      // Set default date to today
+      const today = new Date().toISOString().split('T')[0];
+      expenseDateInput.value = today;
+
+      // Load data from localStorage
+      loadData();
+
+      // Apply saved theme
+      applyTheme();
+
+      // Render initial data
+      updateDashboard();
+      renderExpenses();
+    }
+
+    // Load data from localStorage
+    function loadData() {
+      // Load income
+      const savedIncome = localStorage.getItem('monthlyIncome');
+      if (savedIncome) {
+        monthlyIncome = parseFloat(savedIncome);
+        incomeAmountInput.value = monthlyIncome;
+      }
+
+      // Load expenses
+      const savedExpenses = localStorage.getItem('expenses');
+      if (savedExpenses) {
+        expenses = JSON.parse(savedExpenses);
+      }
+
+      // Load custom categories
+      const savedCategories = localStorage.getItem('customCategories');
+      if (savedCategories) {
+        const customCategories = JSON.parse(savedCategories);
+        addCustomCategoriesToSelect(customCategories);
+      }
+    }
+
+    // Save data to localStorage
+    function saveData() {
+      localStorage.setItem('monthlyIncome', monthlyIncome.toString());
+      localStorage.setItem('expenses', JSON.stringify(expenses));
+    }
+
+    // Update dashboard with current data
+    function updateDashboard() {
+      // Calculate totals
+      const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+      const remainingBalance = monthlyIncome - totalExpenses;
+      const usagePercentage = monthlyIncome > 0 
+        ? Math.min(Math.round((totalExpenses / monthlyIncome) * 100), 100) 
+        : 0;
+
+      // Update UI elements
+      totalIncomeEl.textContent = formatCurrency(monthlyIncome);
+      totalExpensesEl.textContent = formatCurrency(totalExpenses);
+      remainingBalanceEl.textContent = formatCurrency(remainingBalance);
+      usagePercentageEl.textContent = `${usagePercentage}%`;
+
+      // Update pie chart
+      pieSegmentEl.style.clipPath = `polygon(50% 50%, 50% 0%, ${usagePercentage > 50 ? '100% 0%, 100% 100%, ' : ''}${getCoordinatesForPercent(usagePercentage / 100)})`;
+      
+      // Change colors based on usage
+      if (usagePercentage >= 100) {
+        pieSegmentEl.style.backgroundColor = 'var(--danger)';
+        usagePercentageEl.style.color = 'var(--danger)';
+      } else if (usagePercentage >= 80) {
+        pieSegmentEl.style.backgroundColor = '#ff9800'; // Orange for warning
+        usagePercentageEl.style.color = '#ff9800';
+      } else {
+        pieSegmentEl.style.backgroundColor = 'var(--success)';
+        usagePercentageEl.style.color = 'var(--success)';
+      }
+
+      // Update balance color
+      if (remainingBalance < 0) {
+        remainingBalanceEl.style.color = 'var(--danger)';
+      } else {
+        remainingBalanceEl.style.color = 'var(--primary)';
+      }
+    }
+
+    // Helper function to get coordinates for pie chart percentage
+    function getCoordinatesForPercent(percent) {
+      const x = Math.cos(2 * Math.PI * percent);
+      const y = Math.sin(2 * Math.PI * percent);
+      return `${50 + 50 * x}% ${50 + 50 * y}%`;
+    }
+
+    // Render expenses in the table
+    function renderExpenses() {
+      // Clear existing list
+      expenseList.innerHTML = '';
+      
+      // Check if there are expenses
+      if (expenses.length === 0) {
+        const emptyRow = document.createElement('tr');
+        emptyRow.innerHTML = `
+          <td colspan="5" style="text-align: center; padding: 2rem;">
+            No expenses added yet. Start by adding your first expense!
+          </td>
+        `;
+        expenseList.appendChild(emptyRow);
+        return;
+      }
+      
+      // Sort expenses by date (newest first)
+      const sortedExpenses = [...expenses].sort((a, b) => new Date(b.date) - new Date(a.date));
+      
+      // Create rows for each expense
+      sortedExpenses.forEach(expense => {
+        const row = document.createElement('tr');
+        row.className = 'fade-in';
+        row.innerHTML = `
+          <td>${expense.name}</td>
+          <td>${capitalizeFirstLetter(expense.category)}</td>
+          <td>${formatDate(expense.date)}</td>
+          <td>${formatCurrency(expense.amount)}</td>
+          <td class="action-buttons">
+            <button class="action-button edit-expense" data-id="${expense.id}">Edit</button>
+            <button class="action-button danger delete-expense" data-id="${expense.id}">Delete</button>
+          </td>
+        `;
+        expenseList.appendChild(row);
+      });
+      
+      // Add event listeners to buttons
+      document.querySelectorAll('.edit-expense').forEach(button => {
+        button.addEventListener('click', handleEditExpense);
+      });
+      
+      document.querySelectorAll('.delete-expense').forEach(button => {
+        button.addEventListener('click', handleDeleteExpense);
+      });
+    }
+
+    // Format currency amount
+    function formatCurrency(amount) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2
+      }).format(amount);
+    }
+
+    // Format date
+    function formatDate(dateString) {
+      const options = { year: 'numeric', month: 'short', day: 'numeric' };
+      return new Date(dateString).toLocaleDateString('en-US', options);
+    }
+
+    // Capitalize first letter
+    function capitalizeFirstLetter(string) {
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    // Generate unique ID
+    function generateId() {
+      return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+    }
+
+    // Add custom categories to the select dropdown
+    function addCustomCategoriesToSelect(categories) {
+      // Remove any existing custom options (except the "Add Custom" option)
+      const options = Array.from(categorySelect.options);
+      options.forEach(option => {
+        if (option.value !== 'custom' && !['housing', 'food', 'utilities', 'transportation', 'healthcare', 'entertainment', 'other', ''].includes(option.value)) {
+          categorySelect.removeChild(option);
+        }
+      });
+      
+      // Add custom categories before the "Add Custom" option
+      const customOption = categorySelect.querySelector('option[value="custom"]');
+      categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category.toLowerCase();
+        option.textContent = capitalizeFirstLetter(category);
+        categorySelect.insertBefore(option, customOption);
+      });
+      
+      // Save to localStorage
+      localStorage.setItem('customCategories', JSON.stringify(categories));
+    }
+
+    // Apply current theme
+    function applyTheme() {
+      if (currentTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+        themeToggleBtn.textContent = '☀️';
+      } else {
+        document.body.classList.remove('dark-theme');
+        themeToggleBtn.textContent = '🌙';
+      }
+      localStorage.setItem('theme', currentTheme);
+    }
+
+    // Show confirmation modal
+    function showConfirmModal(message, callback) {
+      modalMessage.textContent = message;
+      pendingAction = callback;
+      confirmModal.classList.add('modal-show');
+    }
+
+    // Hide confirmation modal
+    function hideConfirmModal() {
+      confirmModal.classList.remove('modal-show');
+      pendingAction = null;
+    }
+
+    // Event Listeners
+    
+    // Save income
+    saveIncomeBtn.addEventListener('click', () => {
+      const incomeValue = parseFloat(incomeAmountInput.value);
+      if (!isNaN(incomeValue) && incomeValue >= 0) {
+        monthlyIncome = incomeValue;
+        saveData();
+        updateDashboard();
+        
+        // Show success message
+        const savedMessage = document.createElement('div');
+        savedMessage.textContent = 'Income saved successfully!';
+        savedMessage.style.color = 'var(--success)';
+        savedMessage.style.marginTop = '0.5rem';
+        savedMessage.className = 'fade-in';
+        
+        const existingMessage = incomeAmountInput.parentElement.querySelector('div');
+        if (existingMessage) {
+          existingMessage.remove();
+        }
+        
+        incomeAmountInput.parentElement.appendChild(savedMessage);
+        
+        // Remove message after 3 seconds
+        setTimeout(() => {
+          savedMessage.remove();
+        }, 3000);
+      }
+    });
+
+    // Toggle custom category form
+    categorySelect.addEventListener('change', () => {
+      if (categorySelect.value === 'custom') {
+        customCategoryForm.style.display = 'flex';
+        customCategoryInput.focus();
+      } else {
+        customCategoryForm.style.display = 'none';
+      }
+    });
+
+    // Add custom category
+    addCustomCategoryBtn.addEventListener('click', () => {
+      const customCategoryValue = customCategoryInput.value.trim();
+      if (customCategoryValue) {
+        // Get existing categories
+        const savedCategories = localStorage.getItem('customCategories');
+        const customCategories = savedCategories ? JSON.parse(savedCategories) : [];
+        
+        // Add new category if it doesn't exist
+        if (!customCategories.includes(customCategoryValue)) {
+          customCategories.push(customCategoryValue);
+          addCustomCategoriesToSelect(customCategories);
+        }
+        
+        // Update select value and hide form
+        categorySelect.value = customCategoryValue.toLowerCase();
+        customCategoryForm.style.display = 'none';
+        customCategoryInput.value = '';
+      }
+    });
+
+    // Add/Edit expense
+    expenseForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const name = expenseNameInput.value.trim();
+      const category = categorySelect.value;
+      const amount = parseFloat(expenseAmountInput.value);
+      const date = expenseDateInput.value;
+      
+      if (name && category && !isNaN(amount) && amount > 0 && date) {
+        if (editingExpenseId) {
+          // Update existing expense
+          const expenseIndex = expenses.findIndex(exp => exp.id === editingExpenseId);
+          if (expenseIndex !== -1) {
+            expenses[expenseIndex] = {
+              ...expenses[expenseIndex],
+              name,
+              category,
+              amount,
+              date
+            };
+          }
+          editingExpenseId = null;
+        } else {
+          // Add new expense
+          expenses.push({
+            id: generateId(),
+            name,
+            category,
+            amount,
+            date
+          });
+        }
+        
+        // Reset form
+        expenseForm.reset();
+        expenseDateInput.value = new Date().toISOString().split('T')[0]; // Reset to today's date
+        
+        // Save and update UI
+        saveData();
+        updateDashboard();
+        renderExpenses();
+        
+        // Update button text back to "Add Expense"
+        document.getElementById('addExpense').textContent = 'Add Expense';
+      }
+    });
+
+    // Edit expense
+    function handleEditExpense(e) {
+      const expenseId = e.target.getAttribute('data-id');
+      const expense = expenses.find(exp => exp.id === expenseId);
+      
+      if (expense) {
+        // Fill form with expense data
+        expenseNameInput.value = expense.name;
+        categorySelect.value = expense.category;
+        expenseAmountInput.value = expense.amount;
+        expenseDateInput.value = expense.date;
+        
+        // Set editing state
+        editingExpenseId = expenseId;
+        
+        // Update button text
+        document.getElementById('addExpense').textContent = 'Update Expense';
+        
+        // Scroll to form
+        expenseForm.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    // Delete expense
+    function handleDeleteExpense(e) {
+      const expenseId = e.target.getAttribute('data-id');
+      showConfirmModal('Are you sure you want to delete this expense?', () => {
+        expenses = expenses.filter(expense => expense.id !== expenseId);
+        saveData();
+        updateDashboard();
+        renderExpenses();
+      });
+    }
+
+    // Reset monthly expenses
+    resetExpensesBtn.addEventListener('click', () => {
+      if (expenses.length === 0) {
+        alert('No expenses to reset.');
+        return;
+      }
+      
+      showConfirmModal('Are you sure you want to reset all monthly expenses? This cannot be undone.', () => {
+        expenses = [];
+        saveData();
+        updateDashboard();
+        renderExpenses();
+      });
+    });
+
+    // Toggle theme
+    themeToggleBtn.addEventListener('click', () => {
+      currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+      applyTheme();
+    });
+
+    // Modal actions
+    cancelActionBtn.addEventListener('click', hideConfirmModal);
+    confirmActionBtn.addEventListener('click', () => {
+      if (pendingAction) {
+        pendingAction();
+      }
+      hideConfirmModal();
+    });
+
+    // Initialize the app
+    initializeApp();
+  </script>
+</body>
 </html>
