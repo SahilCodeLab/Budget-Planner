@@ -1148,7 +1148,112 @@
 </script>
 <script type="text/javascript" src="//www.highperformanceformat.com/95de1a186e31545db3193e27fe30901e/invoke.js"></script>
 
-
-
 </body>
 </html>
+
+
+<style>
+  /* Existing CSS... */
+
+  /* New Responsive Additions */
+  @media (max-width: 1024px) {
+    .container {
+      padding: 0 1.5rem;
+    }
+    
+    .grid-3-col {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .chart-container {
+      width: 160px;
+      height: 160px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    body {
+      padding-top: 60px;
+    }
+    
+    .header-title .app-name {
+      font-size: 1.1rem;
+    }
+    
+    .grid-3-col {
+      grid-template-columns: 1fr;
+    }
+    
+    .stat-value {
+      font-size: 1.5rem;
+    }
+    
+    .multi-expense-row {
+      grid-template-columns: 1fr !important;
+      gap: 0.8rem;
+    }
+    
+    .multi-expense-row button {
+      grid-column: span 1 !important;
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .container {
+      padding: 0 1rem;
+    }
+    
+    .card {
+      padding: 1rem;
+    }
+    
+    .header-title .company-name {
+      font-size: 0.7rem;
+    }
+    
+    .header-title .app-name {
+      font-size: 1rem;
+    }
+    
+    .grid-2-col {
+      grid-template-columns: 1fr !important;
+    }
+    
+    .expense-table th,
+    .expense-table td {
+      padding: 0.5rem;
+      font-size: 0.85rem;
+    }
+    
+    .action-buttons button {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+    }
+    
+    .chart-container {
+      width: 140px;
+      height: 140px;
+    }
+    
+    .chart-value {
+      font-size: 1.2rem;
+    }
+    
+    button {
+      padding: 0.6rem 1rem;
+      font-size: 0.9rem;
+    }
+  }
+
+  /* Prevent Horizontal Scrolling */
+  html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  .container {
+    width: 100%;
+    overflow: hidden;
+  }
+</style>
